@@ -78,24 +78,45 @@ public class hashcode{
                 for(int k=0; k<contributor.skills.size(); k++){
                     Skill curS=contributor.skills.get(k);
                     Pair<Integer,Integer> pair=new Pair(curS.skillLevel, k);
-                    if(contributor.unavailableTill < currTime)
+                    if(contributor.unavailableTill <= currTime)
                         ogSkills.put(curS.skillName, pair);
                 }
             }
             curAns.ProjectName=curP.name;
+            List<String> arrString = new ArrayList<>();
+            boolean flag = true;
 
-            for(int j=0;j<skills.size(); j++){
-                Skill curS=skills.get(j);
-                if(ogSkills.containsKey(curS.skillName) && curS.skillLevel >= ogSkills.get(curS.skillName).getFirst()){
+            for(int j=0;j<skills.size(); j++) {
+                Skill curS = skills.get(j);
+                if (ogSkills.containsKey(curS.skillName) && curS.skillLevel >= ogSkills.get(curS.skillName).getFirst()) {
                     // select this person
-                    Person contributor=contributors.get(ogSkills.get(curS.skillName).getSecond());
-                    contributor.unavailableTill=currTime+curP.days;
-                    curAns.Persons.add(contributor.name);
+                    Person contributor = contributors.get(ogSkills.get(curS.skillName).getSecond());
+                    contributor.unavailableTill = currTime + curP.days;
+                    arrString.add(contributor.name);
+                } else{
+                    flag = false;
+                    break;
                 }
             }
 
-            ans.add(curAns);
+            if(flag){
+                curAns.Persons = arrString;
+                ans.add(curAns);
+                currTime = currTime + curP.days;
+            }
         }
+
+        FileWriter writer = new FileWriter("filename.txt");
+        writer.write(ans.size()+"\n");
+        for(int i=0; i<ans.size(); i++){
+            writer.write(ans.get(i).ProjectName+"\n");
+            for(int j = 0; j< ans.get(i).Persons.size(); j++){
+                writer.write(ans.get(i).Persons.get(j)+" ");
+            }
+            writer.write("\n");
+        }
+
+        writer.close();
 
     }
 
